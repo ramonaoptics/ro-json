@@ -12,13 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         include:
           - python-version: 3.10
             with-numpy: true
           - python-version: 3.11
             with-numpy: false
           - python-version: 3.12
+            with-numpy: true
+          - python-version: 3.13
+            with-numpy: true
+          - python-version: 3.14
             with-numpy: true
       max-parallel: 8
       fail-fast: false
