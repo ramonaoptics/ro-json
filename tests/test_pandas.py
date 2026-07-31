@@ -53,7 +53,7 @@ def test_pandas_series():
 		back = loads(txt)
 		assert isinstance(back, dict)
 		assert_equal(ds.index.values, back['index'])
-		assert_equal(ds.values, back['data'])
+		assert_equal(ds.to_numpy(), back['data'])
 
 
 def test_pandas_mixed_with_other_types():

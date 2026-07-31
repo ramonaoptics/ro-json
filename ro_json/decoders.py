@@ -253,14 +253,14 @@ def pandas_hook(dct):
 		)
 	elif '__pandas_series__' in dct:
 		from pandas import Series
-		from numpy import dtype, array
+		from pandas.api.types import pandas_dtype
 		meta = dct.pop('__pandas_series__')
 		indx = dct.pop('index') if 'index' in dct else None
 		return Series(
 			data=dct['data'],
 			index=indx,
 			name=meta['name'],
-			dtype=dtype(meta['type']),
+			dtype=pandas_dtype(meta['type']),
 		)
 	return dct	# impossible
 
