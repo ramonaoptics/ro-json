@@ -320,6 +320,18 @@ def test_encode_compact_no_inline_compression():
 		'"dtype": "float64", "shape": [2, 2], "0dim": false, "Corder": true, "endian": "little"}]'
 
 
+@pytest.mark.parametrize('arr', [
+	array([[1.0, 2.0], [3.0, 4.0]], order='F'),
+	arange(32, dtype=float64).reshape(4, 8)[:, ::2],
+	arange(16, dtype=float64).reshape(4, 4).T,
+], ids=['fortran', 'strided', 'transposed'])
+def test_encode_compact_non_contiguous(arr):
+	assert not arr.flags['C_CONTIGUOUS']
+	json = dumps(arr, properties=dict(ndarray_compact=True, ndarray_store_byteorder='little'))
+	assert '"Corder": true' in json, 'Corder must describe the bytes written, not the original layout'
+	assert_equal(loads(json), arr)
+
+
 def test_decode_compact_mixed_compactness():
 	json = '[{"__ndarray__": "b64:AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAA' \
 		'UQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==", "dtype": "float64", "shape": [2, 4], "endian": "little", "Corder": ' \
