@@ -435,7 +435,7 @@ def numpy_encode(obj, primitives=False, properties=None):
 
 	:param primitives: If True, arrays are serialized as (nested) lists without meta info.
 	"""
-	from numpy import ndarray, generic, datetime64
+	from numpy import ndarray, generic, datetime64, ascontiguousarray
 
 	scalar_types = (generic, datetime64)
 
@@ -461,6 +461,9 @@ def numpy_encode(obj, primitives=False, properties=None):
 			if isinstance(use_compact, int) and not isinstance(use_compact, bool):
 				use_compact = obj.size >= use_compact
 			if use_compact:
+				# compact format is C order only; Corder below must describe the written bytes
+				if not obj.flags['C_CONTIGUOUS']:
+					obj = ascontiguousarray(obj)
 				# If the overall json file is compressed, then don't compress the array.
 				data_json = _ndarray_to_bin_str(obj, do_compress=not json_compression, store_endianness=store_endianness)
 			else:
